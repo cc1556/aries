@@ -30,11 +30,16 @@ def put_body(wfile, ss:list):
 
 
 #
-def put_tail(wfile, headers, ss:list):
+def make_tail(headers, ss:list):
     hx = hashlib.sha1()
     hx.update(headers[0])
     hx.update(headers[1])
     hx.update(headers[2])
     for s in ss:
         hx.update(s)
-    wfile.write(hx.hexdigest().encode("ascii"))
+    return hx.hexdigest().encode("ascii")
+
+
+#
+def put_tail(wfile, headers, ss:list):
+    wfile.write(make_tail(headers, ss))
