@@ -2,6 +2,10 @@
 import flask
 
 
+#
+from libs.rpc.rpc_c import RPCRemote
+
+
 ###
 ### 在此添加待注册路由。
 ###
