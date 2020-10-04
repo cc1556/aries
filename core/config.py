@@ -4,6 +4,8 @@ config = {}
 
 #
 cmdl_config_ordered_list = [
+        "RPC_SERVER_NET_ADDR",
+        "RPC_SERVER_TCP_PORT",
         "APIS_DATABASE_PATH",
     ]
 
