@@ -3,7 +3,9 @@ config = {}
 
 
 #
-cmdl_config_ordered_list = []
+cmdl_config_ordered_list = [
+        "APIS_DATABASE_PATH",
+    ]
 
 
 #

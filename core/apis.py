@@ -8,7 +8,11 @@ import sqlite3
 
 
 #
-DATABASE_PATH = "db.db"
+from config import config
+
+
+#
+DATABASE_PATH = config["APIS_DATABASE_PATH"]
 
 
 ###
