@@ -40,9 +40,9 @@ def add_project(project:str):
                         "
                     )
                 for row in r:
-                    return (-1, None)
+                    return [-1, None]
                 if os.path.exists(project + ".git"):
-                    return (-2, None)
+                    return [-2, None]
                 #    #########
                 os.mkdir(project + ".git")
                 # 创建仓库。    #########
@@ -153,8 +153,8 @@ def add_project(project:str):
                     )
                 conn.commit()
     except Exception as e:
-        return (-999, e)
-    return (0, None)
+        return [-999, repr(e)]
+    return [0, None]
 
 
 ###
@@ -189,7 +189,7 @@ def add_object(object:str, project:str):
                 for row in r:
                     break
                 else:
-                    return (-1, None)
+                    return [-1, None]
                 # 查询object是否存在于project中并已由数据库跟踪。    #########
                 r = c.execute(
                         " \
@@ -201,7 +201,7 @@ def add_object(object:str, project:str):
                         "
                     )
                 for row in r:
-                    return (-2, None)
+                    return [-2, None]
                 # 检查object是否与refs/heads中已有分支冲突。    #########
                 p = subprocess.run(
                         ("git show-ref refs/heads/" + object).split(),
@@ -213,7 +213,7 @@ def add_object(object:str, project:str):
                     raise RuntimeError("Git raise STDERR while creating README.md:\n" + "$ " + " ".join(p.args) + "\n" + p.stderr)
                 if not p.stdout == "":
                     if (len(p.stdout.strip()) == (40 + 1 + len("refs/heads/" + object)) and re.match(r"[0-9a-f]{40}[\s]{1}refs/heads/" + object, p.stdout.strip())):
-                        return (-3, None)
+                        return [-3, None]
                     raise RuntimeError("Git print unexpected message to STDOUT:\n" + "$ " + " ".join(p.args) + "\n" + p.stdout)
                 # 获取develop当前指向的commit。    #########
                 p = subprocess.run(
@@ -248,8 +248,8 @@ def add_object(object:str, project:str):
                     )
                 conn.commit()
     except Exception as e:
-        return (-999, e)
-    return (0, None)
+        return [-999, repr(e)]
+    return [0, None]
 
 
 ###
@@ -288,7 +288,7 @@ def add_task(task:str, object:str, project:str):
                 for row in r:
                     break
                 else:
-                    return (-1, None)
+                    return [-1, None]
                 # 查询object是否存在于project中并已由数据库跟踪。    #########
                 r = c.execute(
                         " \
@@ -302,7 +302,7 @@ def add_task(task:str, object:str, project:str):
                 for row in r:
                     break
                 else:
-                    return (-2, None)
+                    return [-2, None]
                 # 查询task是否存在于project中并已由数据库跟踪。    #########
                 r = c.execute(    # task分支可能与object分支及其附属task分支冲突。
                         " \
@@ -314,7 +314,7 @@ def add_task(task:str, object:str, project:str):
                         "
                     )
                 for row in r:
-                    return (-3, None)
+                    return [-3, None]
                 # 检查task是否与refs/heads中已有分支冲突。    #########
                 p = subprocess.run(
                         ("git show-ref refs/heads/" + task).split(),
@@ -326,7 +326,7 @@ def add_task(task:str, object:str, project:str):
                     raise RuntimeError("Git raise STDERR while creating README.md:\n" + "$ " + " ".join(p.args) + "\n" + p.stderr)
                 if not p.stdout == "":
                     if (len(p.stdout.strip()) == (40 + 1 + len("refs/heads/" + task)) and re.match(r"[0-9a-f]{40}[\s]{1}refs/heads/" + task, p.stdout.strip())):
-                        return (-4, None)
+                        return [-4, None]
                     raise RuntimeError("Git print unexpected message to STDOUT:\n" + "$ " + " ".join(p.args) + "\n" + p.stdout)
                 # 获取object当前指向的commit。    #########
                 p = subprocess.run(
@@ -361,8 +361,8 @@ def add_task(task:str, object:str, project:str):
                     )
                 conn.commit()
     except Exception as e:
-        return (-999, e)
-    return (0, None)
+        return [-999, repr(e)]
+    return [0, None]
 
 
 ###
@@ -390,8 +390,8 @@ def list_projects():
                     }
                 projects.append(project)
     except Exception as e:
-        return (-999, e)
-    return (0, projects)
+        return [-999, repr(e)]
+    return [0, projects]
 
 
 ###
@@ -421,7 +421,7 @@ def list_objects(project:str):
                 for row in r:
                     break
                 else:
-                    return (-1, None)
+                    return [-1, None]
                 # 查询objects。    #########
                 r = c.execute(
                         " \
@@ -437,8 +437,8 @@ def list_objects(project:str):
                         }
                     objects.append(object)
     except Exception as e:
-        return (-999, e)
-    return (0, objects)
+        return [-999, repr(e)]
+    return [0, objects]
 
 
 ###
@@ -472,7 +472,7 @@ def list_tasks(object:str, project:str):
                 for row in r:
                     break
                 else:
-                    return (-1, None)
+                    return [-1, None]
                 # 查询object是否存在。    #########
                 r = c.execute(
                         " \
@@ -486,7 +486,7 @@ def list_tasks(object:str, project:str):
                 for row in r:
                     break
                 else:
-                    return (-2, None)
+                    return [-2, None]
                 # 查询tasks。    #########
                 r = c.execute(
                         " \
@@ -504,5 +504,5 @@ def list_tasks(object:str, project:str):
                         }
                     tasks.append(task)
     except Exception as e:
-        return (-999, e)
-    return (0, tasks)
+        return [-999, repr(e)]
+    return [0, tasks]
