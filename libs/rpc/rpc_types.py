@@ -55,6 +55,16 @@ type_pybuiltin_int = RPCType(
 
 
 ###
+### NoneType。
+###
+type_pybuiltin_NoneType = RPCType(
+        lambda d: b"\x00",
+        lambda d: None,
+        (127).to_bytes(1, "big")
+    )
+
+
+###
 ### list。
 ### 复合类型，使用qcb。
 ###
@@ -85,6 +95,7 @@ types_allowed = {
         id(bytes),
         id(str),
         id(int),
+        id(type(None)),
         id(list),
     }
 
@@ -94,6 +105,7 @@ types_ids_map = {
         id(bytes): type_pybuiltin_bytes,
         id(str): type_pybuiltin_str,
         id(int): type_pybuiltin_int,
+        id(type(None)): type_pybuiltin_NoneType,
         id(list): type_pybuiltin_list,
     }
 
@@ -103,5 +115,6 @@ types_indicators_map = {
         type_pybuiltin_bytes.type_indicator: type_pybuiltin_bytes,
         type_pybuiltin_str.type_indicator: type_pybuiltin_str,
         type_pybuiltin_int.type_indicator: type_pybuiltin_int,
+        type_pybuiltin_NoneType.type_indicator: type_pybuiltin_NoneType,
         type_pybuiltin_list.type_indicator: type_pybuiltin_list,
     }
