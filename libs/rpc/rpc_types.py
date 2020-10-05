@@ -90,6 +90,44 @@ type_pybuiltin_list = RPCType(
     )
 
 
+###
+### dict。
+### 复合类型，使用qcb。
+###
+def type_pybuiltin_dict_to_bytes(ds:dict):
+    for k in ds:    # k: key。
+        assert(id(type(k)) in types_allowed)
+        assert(id(type(ds[k])) in types_allowed)
+    bs = []
+    for k in ds:
+        kt = types_ids_map[id(type(k))].type_indicator
+        kb = types_ids_map[id(type(k))].to_bytes(k)
+        bs.append(kt + kb)
+        vt = types_ids_map[id(type(ds[k]))].type_indicator
+        vb = types_ids_map[id(type(ds[k]))].to_bytes(ds[k])
+        bs.append(vt + vb)
+    hs = qcb_put.make_header(bs)
+    return b"".join(hs) + b"".join(bs) + qcb_put.make_tail(hs, bs)    # 直接拼接qcb串。
+#
+def type_pybuiltin_dict_from_bytes(bs):
+    bs = qcb.get(io.BytesIO(bs))    # 也不是不行。
+    assert(len(bs) % 2 == 0)
+    ds = {}
+    for i in range(int(len(bs)/2)):
+        kb = bs[i*2]
+        k = types_indicators_map[kb[0:1]].from_bytes(kb[1:])
+        vb = bs[i*2+1]
+        v = types_indicators_map[vb[0:1]].from_bytes(vb[1:])
+        ds[k] = v
+    return ds
+#
+type_pybuiltin_dict = RPCType(
+        type_pybuiltin_dict_to_bytes,
+        type_pybuiltin_dict_from_bytes,
+        (129).to_bytes(1, "big")
+    )
+
+
 #
 types_allowed = {
         id(bytes),
@@ -97,6 +135,7 @@ types_allowed = {
         id(int),
         id(type(None)),
         id(list),
+        id(dict),
     }
 
 
@@ -107,6 +146,7 @@ types_ids_map = {
         id(int): type_pybuiltin_int,
         id(type(None)): type_pybuiltin_NoneType,
         id(list): type_pybuiltin_list,
+        id(dict): type_pybuiltin_dict,
     }
 
 
@@ -117,4 +157,5 @@ types_indicators_map = {
         type_pybuiltin_int.type_indicator: type_pybuiltin_int,
         type_pybuiltin_NoneType.type_indicator: type_pybuiltin_NoneType,
         type_pybuiltin_list.type_indicator: type_pybuiltin_list,
+        type_pybuiltin_dict.type_indicator: type_pybuiltin_dict,
     }
