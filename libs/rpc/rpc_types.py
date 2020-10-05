@@ -48,8 +48,8 @@ type_pybuiltin_str = RPCType(
 ### int。
 ###
 type_pybuiltin_int = RPCType(
-        lambda d: d.to_bytes((d.bit_length() + 7)//8, "big"),
-        lambda d: int.from_bytes(d, "big"),
+        lambda d: d.to_bytes((d.bit_length() + 7)//8, "big", signed=True),
+        lambda d: int.from_bytes(d, "big", signed=True),
         (2).to_bytes(1, "big")
     )
 
