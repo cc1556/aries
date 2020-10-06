@@ -12,6 +12,7 @@ from config import config
 
 
 #
+FLOCKS_DIR_PATH = config["GLOBAL_FLOCKS_DIR_PATH"]
 DATABASE_PATH = config["APIS_DATABASE_PATH"]
 GIT_DIR_PATH = config["APIS_GIT_DIR_PATH"]
 
@@ -28,7 +29,7 @@ GIT_DIR_PATH = config["APIS_GIT_DIR_PATH"]
 ###
 def add_project(project:str):
     try:
-        with open("/var/lock/aries." + ".project." + project + ".lock", "wb") as l:    # flock实现同步。
+        with open(FLOCKS_DIR_PATH + "/aries." + ".project." + project + ".lock", "wb") as l:    # flock实现同步。
             fcntl.flock(l.fileno(), fcntl.LOCK_EX)    # 锁。
             with sqlite3.connect(DATABASE_PATH) as conn:
                 # 查询数据库，检查project是否已存在。    #########
@@ -172,8 +173,8 @@ def add_project(project:str):
 ###
 def add_object(object:str, project:str):
     try:
-        lp = open("/var/lock/aries." + ".project." + project + ".lock", "wb")
-        lo = open("/var/lock/aries." + ".object." + project + "." + object + ".lock", "wb")
+        lp = open(FLOCKS_DIR_PATH + "/aries." + ".project." + project + ".lock", "wb")
+        lo = open(FLOCKS_DIR_PATH + "/aries." + ".object." + project + "." + object + ".lock", "wb")
         with lp, lo:
             fcntl.flock(lp.fileno(), fcntl.LOCK_EX)
             fcntl.flock(lo.fileno(), fcntl.LOCK_EX)
@@ -269,9 +270,9 @@ def add_object(object:str, project:str):
 ###
 def add_task(task:str, object:str, project:str):
     try:
-        lp = open("/var/lock/aries." + ".project." + project + ".lock", "wb")
-        lo = open("/var/lock/aries." + ".object." + project + "." + object + ".lock", "wb")
-        lt = open("/var/lock/aries." + ".task." + project + "." + object + "." + task + ".lock", "wb")
+        lp = open(FLOCKS_DIR_PATH + "/aries." + ".project." + project + ".lock", "wb")
+        lo = open(FLOCKS_DIR_PATH + "/aries." + ".object." + project + "." + object + ".lock", "wb")
+        lt = open(FLOCKS_DIR_PATH + "/aries." + ".task." + project + "." + object + "." + task + ".lock", "wb")
         with lp, lo, lt:
             fcntl.flock(lp.fileno(), fcntl.LOCK_EX)
             fcntl.flock(lo.fileno(), fcntl.LOCK_EX)
@@ -406,7 +407,7 @@ def list_projects():
 ###
 def list_objects(project:str):
     try:
-        lp = open("/var/lock/aries.project." + project + ".lock", "wb")
+        lp = open(FLOCKS_DIR_PATH + "/aries.project." + project + ".lock", "wb")
         with lp:
             fcntl.flock(lp.fileno(), fcntl.LOCK_EX)
             with sqlite3.connect(DATABASE_PATH) as conn:
@@ -455,8 +456,8 @@ def list_objects(project:str):
 ###
 def list_tasks(object:str, project:str):
     try:
-        lp = open("/var/lock/aries.project." + project + ".lock", "wb")
-        lo = open("/var/lock/aries.object." + project + "." + object + ".lock", "wb")
+        lp = open(FLOCKS_DIR_PATH + "/aries.project." + project + ".lock", "wb")
+        lo = open(FLOCKS_DIR_PATH + "/aries.object." + project + "." + object + ".lock", "wb")
         with lp, lo:
             fcntl.flock(lp.fileno(), fcntl.LOCK_EX)
             fcntl.flock(lo.fileno(), fcntl.LOCK_EX)
