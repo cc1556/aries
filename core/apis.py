@@ -12,7 +12,9 @@ from config import config
 
 
 #
+FLOCKS_DIR_PATH = config["GLOBAL_FLOCKS_DIR_PATH"]
 DATABASE_PATH = config["APIS_DATABASE_PATH"]
+GIT_DIR_PATH = config["APIS_GIT_DIR_PATH"]
 
 
 ###
@@ -27,7 +29,7 @@ DATABASE_PATH = config["APIS_DATABASE_PATH"]
 ###
 def add_project(project:str):
     try:
-        with open("/var/lock/aries." + ".project." + project + ".lock", "wb") as l:    # flock实现同步。
+        with open(FLOCKS_DIR_PATH + "/aries." + ".project." + project + ".lock", "wb") as l:    # flock实现同步。
             fcntl.flock(l.fileno(), fcntl.LOCK_EX)    # 锁。
             with sqlite3.connect(DATABASE_PATH) as conn:
                 # 查询数据库，检查project是否已存在。    #########
@@ -44,16 +46,16 @@ def add_project(project:str):
                 if os.path.exists(project + ".git"):
                     return [-2, None]
                 #    #########
-                os.mkdir(project + ".git")
+                os.mkdir(GIT_DIR_PATH + "/" + project + ".git")
                 # 创建仓库。    #########
                 subprocess.run(
                         ("git init --bare").split(),
-                        cwd=("./" + project + ".git")
+                        cwd=GIT_DIR_PATH + "/" + project + ".git"
                     )
                 # 配置仓库user.name。    #########
                 p = subprocess.run(
                         ("git config --local user.name").split() + ["\"SCM Core\""],
-                        cwd="./" + project + ".git",
+                        cwd=GIT_DIR_PATH + "/" + project + ".git",
                         capture_output=True,
                         text=True
                     )
@@ -64,7 +66,7 @@ def add_project(project:str):
                 # 配置仓库user.email。    #########
                 p = subprocess.run(
                         ("git config --local user.email scm-core@aries").split(),
-                        cwd="./" + project + ".git",
+                        cwd=GIT_DIR_PATH + "/" + project + ".git",
                         capture_output=True,
                         text=True
                     )
@@ -75,7 +77,7 @@ def add_project(project:str):
                 # 创建README.md对象。    #########
                 p = subprocess.run(
                         ("git hash-object -w --stdin").split(),
-                        cwd="./" + project + ".git",
+                        cwd=GIT_DIR_PATH + "/" + project + ".git",
                         capture_output=True,
                         input=(project + "\n"),
                         text=True
@@ -88,7 +90,7 @@ def add_project(project:str):
                 # 更新README.md到index中。    #########
                 p = subprocess.run(
                         ("git update-index --add --cacheinfo 100644 " + readme_md_hash + " README.md").split(),
-                        cwd="./" + project + ".git",
+                        cwd=GIT_DIR_PATH + "/" + project + ".git",
                         capture_output=True,
                         text=True
                     )
@@ -99,7 +101,7 @@ def add_project(project:str):
                 # 写入tree对象。    #########
                 p = subprocess.run(
                         ("git write-tree").split(),
-                        cwd="./" + project + ".git",
+                        cwd=GIT_DIR_PATH + "/" + project + ".git",
                         capture_output=True,
                         text=True
                     )
@@ -111,7 +113,7 @@ def add_project(project:str):
                 # 创建初始commit对象。    #########
                 p = subprocess.run(
                         ("git commit-tree " + tree_hash).split(),
-                        cwd="./" + project + ".git",
+                        cwd=GIT_DIR_PATH + "/" + project + ".git",
                         capture_output=True,
                         input=("Initial commit\n"),
                         text=True
@@ -124,7 +126,7 @@ def add_project(project:str):
                 # 更新master分支到初始commit。    #########
                 p = subprocess.run(
                         ("git update-ref refs/heads/master " + commit_hash).split(),
-                        cwd="./" + project + ".git",
+                        cwd=GIT_DIR_PATH + "/" + project + ".git",
                         capture_output=True,
                         text=True
                     )
@@ -135,7 +137,7 @@ def add_project(project:str):
                 # 创建develop分支到初始commit。    #########
                 p = subprocess.run(
                         ("git update-ref refs/heads/develop " + commit_hash).split(),
-                        cwd="./" + project + ".git",
+                        cwd=GIT_DIR_PATH + "/" + project + ".git",
                         capture_output=True,
                         text=True
                     )
@@ -171,8 +173,8 @@ def add_project(project:str):
 ###
 def add_object(object:str, project:str):
     try:
-        lp = open("/var/lock/aries." + ".project." + project + ".lock", "wb")
-        lo = open("/var/lock/aries." + ".object." + project + "." + object + ".lock", "wb")
+        lp = open(FLOCKS_DIR_PATH + "/aries." + ".project." + project + ".lock", "wb")
+        lo = open(FLOCKS_DIR_PATH + "/aries." + ".object." + project + "." + object + ".lock", "wb")
         with lp, lo:
             fcntl.flock(lp.fileno(), fcntl.LOCK_EX)
             fcntl.flock(lo.fileno(), fcntl.LOCK_EX)
@@ -205,7 +207,7 @@ def add_object(object:str, project:str):
                 # 检查object是否与refs/heads中已有分支冲突。    #########
                 p = subprocess.run(
                         ("git show-ref refs/heads/" + object).split(),
-                        cwd="./" + project + ".git",
+                        cwd=GIT_DIR_PATH + "/" + project + ".git",
                         capture_output=True,
                         text=True
                     )
@@ -218,7 +220,7 @@ def add_object(object:str, project:str):
                 # 获取develop当前指向的commit。    #########
                 p = subprocess.run(
                         ("git show-ref refs/heads/develop").split(),
-                        cwd="./" + project + ".git",
+                        cwd=GIT_DIR_PATH + "/" + project + ".git",
                         capture_output=True,
                         text=True
                     )
@@ -230,7 +232,7 @@ def add_object(object:str, project:str):
                 # 添加新object。    #########
                 p = subprocess.run(
                         ("git update-ref refs/heads/" + object + " " + dev_commit_hash).split(),
-                        cwd="./" + project + ".git",
+                        cwd=GIT_DIR_PATH + "/" + project + ".git",
                         capture_output=True,
                         text=True
                     )
@@ -268,9 +270,9 @@ def add_object(object:str, project:str):
 ###
 def add_task(task:str, object:str, project:str):
     try:
-        lp = open("/var/lock/aries." + ".project." + project + ".lock", "wb")
-        lo = open("/var/lock/aries." + ".object." + project + "." + object + ".lock", "wb")
-        lt = open("/var/lock/aries." + ".task." + project + "." + object + "." + task + ".lock", "wb")
+        lp = open(FLOCKS_DIR_PATH + "/aries." + ".project." + project + ".lock", "wb")
+        lo = open(FLOCKS_DIR_PATH + "/aries." + ".object." + project + "." + object + ".lock", "wb")
+        lt = open(FLOCKS_DIR_PATH + "/aries." + ".task." + project + "." + object + "." + task + ".lock", "wb")
         with lp, lo, lt:
             fcntl.flock(lp.fileno(), fcntl.LOCK_EX)
             fcntl.flock(lo.fileno(), fcntl.LOCK_EX)
@@ -318,7 +320,7 @@ def add_task(task:str, object:str, project:str):
                 # 检查task是否与refs/heads中已有分支冲突。    #########
                 p = subprocess.run(
                         ("git show-ref refs/heads/" + task).split(),
-                        cwd="./" + project + ".git",
+                        cwd=GIT_DIR_PATH + "/" + project + ".git",
                         capture_output=True,
                         text=True
                     )
@@ -331,7 +333,7 @@ def add_task(task:str, object:str, project:str):
                 # 获取object当前指向的commit。    #########
                 p = subprocess.run(
                         ("git show-ref refs/heads/" + object).split(),
-                        cwd="./" + project + ".git",
+                        cwd=GIT_DIR_PATH + "/" + project + ".git",
                         capture_output=True,
                         text=True
                     )
@@ -343,7 +345,7 @@ def add_task(task:str, object:str, project:str):
                 # 添加新task。    #########
                 p = subprocess.run(
                         ("git update-ref refs/heads/" + task + " " + obj_commit_hash).split(),
-                        cwd="./" + project + ".git",
+                        cwd=GIT_DIR_PATH + "/" + project + ".git",
                         capture_output=True,
                         text=True
                     )
@@ -405,7 +407,7 @@ def list_projects():
 ###
 def list_objects(project:str):
     try:
-        lp = open("/var/lock/aries.project." + project + ".lock", "wb")
+        lp = open(FLOCKS_DIR_PATH + "/aries.project." + project + ".lock", "wb")
         with lp:
             fcntl.flock(lp.fileno(), fcntl.LOCK_EX)
             with sqlite3.connect(DATABASE_PATH) as conn:
@@ -454,8 +456,8 @@ def list_objects(project:str):
 ###
 def list_tasks(object:str, project:str):
     try:
-        lp = open("/var/lock/aries.project." + project + ".lock", "wb")
-        lo = open("/var/lock/aries.object." + project + "." + object + ".lock", "wb")
+        lp = open(FLOCKS_DIR_PATH + "/aries.project." + project + ".lock", "wb")
+        lo = open(FLOCKS_DIR_PATH + "/aries.object." + project + "." + object + ".lock", "wb")
         with lp, lo:
             fcntl.flock(lp.fileno(), fcntl.LOCK_EX)
             fcntl.flock(lo.fileno(), fcntl.LOCK_EX)

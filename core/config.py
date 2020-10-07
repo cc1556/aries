@@ -6,7 +6,9 @@ config = {}
 cmdl_config_ordered_list = [
         "RPC_SERVER_NET_ADDR",
         "RPC_SERVER_TCP_PORT",
+        "GLOBAL_FLOCKS_DIR_PATH",
         "APIS_DATABASE_PATH",
+        "APIS_GIT_DIR_PATH",
     ]
 
 
