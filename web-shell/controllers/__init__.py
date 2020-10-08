@@ -3,7 +3,7 @@ import flask
 
 
 #
-from libs.rpc.rpc_c import RPCRemote
+from tcp_rpc_c import TCPRPCRemote as RPCRemote
 
 
 ###
