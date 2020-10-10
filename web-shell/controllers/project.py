@@ -28,10 +28,7 @@ def project(project_name:str):
         if result[0][0] == 0:
             for project in result[0][1]:
                 if project["name"] == project_name:
-                    projects = {
-                            "name": project["name"]
-                        }
-                    break
+                    break    # 保留project值。
             else:
                 raise RuntimeError("Fetch info failure:", "Project", project_name, "not exists.")
         else:
