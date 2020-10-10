@@ -3,7 +3,10 @@ config = {}
 
 
 #
-cmdl_config_ordered_list = []
+cmdl_config_ordered_list = [
+        "CORE_APIS_RPC_ADDR",
+        "CORE_APIS_RPC_PORT",
+    ]
 
 
 #
