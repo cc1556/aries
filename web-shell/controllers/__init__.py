@@ -10,6 +10,8 @@ from tcp_rpc_c import TCPRPCRemote as RPCRemote
 ### 在此添加待注册路由。
 ###
 route_descs = []
+from .index import route_descs as route_descs_i
+route_descs.extend(route_descs_i)
 from .projects import route_descs as route_descs_i
 route_descs.extend(route_descs_i)
 

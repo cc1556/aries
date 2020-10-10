@@ -1,0 +1,44 @@
+{# arguments: #}
+{# projects : [(name),] : 项目名称与id集合的列表 #}
+{# operation_add_project : {"url"} : 添加新项目 #}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>index</title>
+    </head>
+    <body>
+        <div id="title">
+            <h1>index</h1>
+        </div>
+        <hr />
+        <div id="projects">
+            <div>
+                <h2>Projects</h2>
+            </div>
+            <div>
+                <ul id="projects">
+                    {% for project in args["projects"] %}
+                    <li>
+                        <a href="project/{{ project[0] }}">{{ project[0] }}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <br />
+        <hr />
+        <div id="operation_add_project">
+            <div>
+                <h2>Add project</h2>
+            </div>
+            <div>
+                <form action="{{ args["operation_add_project"]["url"] }}" method="POST">
+                    <input id="project_name" name="project_name" type="text" placeholder="New project name." />
+                    <input id="add_new_project" type="submit" value="Add" />
+                </form>
+            </div>
+        </div>
+        <br />
+        <hr />
+    </body>
+</html>
