@@ -12,7 +12,11 @@ from tcp_rpc_c import TCPRPCRemote as RPCRemote
 route_descs = []
 from .index import route_descs as route_descs_i
 route_descs.extend(route_descs_i)
+from .project import route_descs as route_descs_i
+route_descs.extend(route_descs_i)
 from .projects import route_descs as route_descs_i
+route_descs.extend(route_descs_i)
+from .objects import route_descs as route_descs_i
 route_descs.extend(route_descs_i)
 
 

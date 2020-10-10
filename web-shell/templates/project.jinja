@@ -1,0 +1,67 @@
+{# arguments: #}
+{# project : {"name"} : 项目的基本信息 #}
+{# objects : [(name),] : 项目的目标 #}
+{# operation_add_object : {"url"} : 添加新目标 #}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>project</title>
+    </head>
+    <body>
+        <div id="title">
+            <h1>{{ args["project"]["name"]}} << project >></h1>
+        </div>
+        <hr />
+        <div id="information">
+            <div>
+                <h2>Information</h2>
+            </div>
+            <div id="information_base">
+                <div>
+                    <h3>Base</h3>
+                </div>
+                <div>
+                    <ul id="project_information">
+                        <li>Name: {{ args["project"]["name"] }}</li>
+                    </ul>
+                </div>
+            </div>
+            <div id="information_objects">
+                <div>
+                    <h3>Objects</h3>
+                </div>
+                <div>
+                    <ul id="objects_list">
+                        {% for object in args["objects"] %}
+                            <li>
+                                <a href="object/{{ args["project"]["name"] }}/{{ object[0] }}">{{ object[0] }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <br />
+        <hr />
+        <div id="operations">
+            <div>
+                <h2>Operations</h2>
+            </div>
+            <div id="operation_add_object">
+                <div>
+                    <h3>Add object</h3>
+                </div>
+                <div>
+                    <form action="{{ args["operation_add_object"]["url"] }}" method="POST">
+                        <input id="project_name" name="project_name" type="text" value="{{ args["project"]["name"] }}" readonly />
+                        <br />
+                        <input id="object_name" name="object_name" type="text" placeholder="New object name." />
+                        <input id="add_new_object" type="submit" value="Add" />
+                    </form>
+                </div>
+            </div>
+        </div>
+        <br />
+        <hr />
+    </body>
+</html>
