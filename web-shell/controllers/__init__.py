@@ -20,6 +20,8 @@ from .object import route_descs as route_descs_i
 route_descs.extend(route_descs_i)
 from .objects import route_descs as route_descs_i
 route_descs.extend(route_descs_i)
+from .task import route_descs as route_descs_i
+route_descs.extend(route_descs_i)
 from .tasks import route_descs as route_descs_i
 route_descs.extend(route_descs_i)
 
