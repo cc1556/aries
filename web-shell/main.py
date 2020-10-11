@@ -27,4 +27,9 @@ setup_routes(app)
 
 
 #
-app.run()
+WEB_SERVER_LOCAL_ADDR = config.config["WEB_SERVER_LOCAL_ADDR"]
+WEB_SERVER_LOCAL_PORT = int(config.config["WEB_SERVER_LOCAL_PORT"])
+
+
+#
+app.run(host=WEB_SERVER_LOCAL_ADDR, port=WEB_SERVER_LOCAL_PORT)

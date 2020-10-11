@@ -4,6 +4,8 @@ config = {}
 
 #
 cmdl_config_ordered_list = [
+        "WEB_SERVER_LOCAL_ADDR",
+        "WEB_SERVER_LOCAL_PORT",
         "CORE_APIS_RPC_ADDR",
         "CORE_APIS_RPC_PORT",
     ]
