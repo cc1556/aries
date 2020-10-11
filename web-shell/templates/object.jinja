@@ -35,7 +35,7 @@
                     <ul id="tasks_list">
                         {% for task in args["tasks"] %}
                         <li>
-                            <a href="/task/{{ args["project"]["name"] }}/{{ args["object"]["name"] }}/{{ task[0] }}<">{{ task[0] }}</a>
+                            <a href="/task/{{ args["project"]["name"] }}/{{ args["object"]["name"] }}/{{ task[0] }}">{{ task[0] }}</a>
                         </li>
                         {% endfor %}
                     </ul>
