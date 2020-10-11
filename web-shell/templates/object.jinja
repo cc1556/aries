@@ -1,0 +1,70 @@
+{# arguments: #}
+{# object : {"name"} : 目标的基本信息 #}
+{# project : {"name"} : 所属项目的基本信息 #}
+{# tasks : [(name),] : 目标的任务 #}
+{# operation_add_task : {"url"} : 添加新任务 #}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>object</title>
+    </head>
+    <body>
+        <div id="title">
+            <h1>{{ args["object"]["name"] }} << object >> : {{ args["project"]["name"]}}</h1>
+        </div>
+        <hr />
+        <div id="information">
+            <div>
+                <h2>Information</h2>
+            </div>
+            <div id="information_base">
+                <div>
+                    <h3>Base</h3>
+                </div>
+                <div>
+                    <ul id="object_information">
+                        <li>Name: {{ args["object"]["name"] }}</li>
+                    </ul>
+                </div>
+            </div>
+            <div id="tasks">
+                <div>
+                    <h3>Tasks</h3>
+                </div>
+                <div>
+                    <ul id="tasks_list">
+                        {% for task in args["tasks"] %}
+                        <li>
+                            <a href="/task/{{ args["project"]["name"] }}/{{ args["object"]["name"] }}/{{ task[0] }}">{{ task[0] }}</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <br />
+        <hr />
+        <div id="operations">
+            <div>
+                <h2>Operations</h2>
+            </div>
+            <div id="operation_add_task">
+                <div>
+                    <h3>Add task</h3>
+                </div>
+                <div>
+                    <form action="{{ args["operation_add_task"]["url"] }}" method="POST">
+                        <input id="project_name" name="project_name" type="text" value="{{ args["project"]["name"] }}" readonly />
+                        <br />
+                        <input id="object_name" name="object_name" type="text" value="{{ args["object"]["name"] }}" readonly />
+                        <br />
+                        <input id="task_name" name="task_name" type="text" placeholder="New task name." />
+                        <input id="add_new_task" type="submit" value="Add" />
+                    </form>
+                </div>
+            </div>
+        </div>
+        <br />
+        <hr />
+    </body>
+</html>

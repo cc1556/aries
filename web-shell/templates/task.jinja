@@ -1,0 +1,40 @@
+{# arguments: #}
+{# task : {"name"} : 任务的基本信息 #}
+{# object : {"name"} : 所属目标的基本信息 #}
+{# project : {"name"} : 所属项目的基本信息 #}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>task</title>
+    </head>
+    <body>
+        <div id="title">
+            <h1>{{ args["task"]["name"] }} << task >> : {{ args["object"]["name"] }} : {{ args["project"]["name"]}}</h1>
+        </div>
+        <hr />
+        <div id="information">
+            <div>
+                <h2>Information</h2>
+            </div>
+            <div id="information_base">
+                <div>
+                    <h3>Base</h3>
+                </div>
+                <div>
+                    <ul id="task_information">
+                        <li>Name: {{ args["task"]["name"] }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <br />
+        <hr />
+        <div id="operations">
+            <div>
+                <h2>Operations</h2>
+            </div>
+        </div>
+        <br />
+        <hr />
+    </body>
+</html>
