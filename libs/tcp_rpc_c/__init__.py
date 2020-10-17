@@ -3,7 +3,7 @@ import socket
 
 
 #
-from libs.rpc.rpc_c import RPCRemote
+from .libs.rpc.rpc_c import RPCRemote
 
 
 #
