@@ -1,0 +1,20 @@
+{# arguments: #}
+{# core_apis : {"addr", "port"} : core的ip和端口 #}
+{# project_name : str : 项目名 #}
+#!/usr/bin/sh
+
+
+#
+CORE_APIS_RPC_ADDR={{ args["core_apis"]["addr"] }}
+CORE_APIS_RPC_PORT={{ args["core_apis"]["port"] }}
+PROJECT_NAME={{ args["project_name"] }}
+
+
+#
+/usr/bin/env python3 \
+        $(pwd)/$(dirname $0)/_bridges/update.py \
+                $CORE_APIS_RPC_ADDR \
+                $CORE_APIS_RPC_PORT \
+                $PROJECT_NAME \
+                $@
+exit $?

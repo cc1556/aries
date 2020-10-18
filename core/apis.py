@@ -3,8 +3,14 @@ import fcntl
 import os
 import os.path
 import re
+import shutil
+import stat
 import subprocess
 import sqlite3
+
+
+#
+import jinja2
 
 
 #
@@ -12,9 +18,12 @@ from config import config
 
 
 #
+RPC_SERVER_NET_ADDR = config["RPC_SERVER_NET_ADDR"]
+RPC_SERVER_TCP_PORT = config["RPC_SERVER_TCP_PORT"]
 FLOCKS_DIR_PATH = config["GLOBAL_FLOCKS_DIR_PATH"]
 DATABASE_PATH = config["APIS_DATABASE_PATH"]
 GIT_DIR_PATH = config["APIS_GIT_DIR_PATH"]
+GIT_HOOKS_PATH = config["APIS_GIT_HOOKS_PATH"]
 
 
 ###
@@ -145,6 +154,31 @@ def add_project(project:str):
                     raise RuntimeError("Git raise STDERR while creating README.md:\n" + "$ " + " ".join(p.args) + "\n" + p.stderr)
                 if not p.stdout == "":
                     raise RuntimeError("Git print unexpected message to STDOUT:\n" + "$ " + " ".join(p.args) + "\n" + p.stdout)
+                # 清空hooks文件夹。    #########
+                for fname in os.listdir(GIT_DIR_PATH + "/" + project + ".git/hooks"):
+                    fpath = GIT_DIR_PATH + "/" + project + ".git/hooks/" + fname
+                    assert(os.path.isfile(fpath))
+                    os.remove(fpath)
+                # 渲染钩子模板。    #########
+                with open(GIT_HOOKS_PATH + "/update.jinja", "r") as f_tmpl:
+                    tmpl = f_tmpl.read()
+                tmpl = jinja2.Template(tmpl)
+                args = {
+                        "core_apis": {
+                                "addr": RPC_SERVER_NET_ADDR,
+                                "port": RPC_SERVER_TCP_PORT,
+                            },
+                        "project_name": project,
+                    }
+                with open(GIT_DIR_PATH + "/" + project + ".git/hooks/update", "w") as f_hook:
+                    f_hook.write(tmpl.render(args=args))
+                # 修改钩子权限。    #########
+                for fname in os.listdir(GIT_DIR_PATH + "/" + project + ".git/hooks"):
+                    fpath = GIT_DIR_PATH + "/" + project + ".git/hooks/" + fname
+                    if os.path.isfile(fpath):
+                        os.chmod(fpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP | stat.S_IROTH)    # chmod 744
+                # 复制钩子后端桥。    #########
+                shutil.copytree(GIT_HOOKS_PATH + "/_bridges", GIT_DIR_PATH + "/" + project + ".git/hooks/_bridges")
                 # 更新数据库。    #########
                 c.execute(
                         " \

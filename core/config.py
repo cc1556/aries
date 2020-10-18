@@ -9,6 +9,7 @@ cmdl_config_ordered_list = [
         "GLOBAL_FLOCKS_DIR_PATH",
         "APIS_DATABASE_PATH",
         "APIS_GIT_DIR_PATH",
+        "APIS_GIT_HOOKS_PATH",
     ]
 
 
