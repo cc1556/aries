@@ -11,8 +11,8 @@ PROJECT_NAME={{ args["project_name"] }}
 
 
 #
-/usr/bin/env python3 
-        $(pwd)/$(dirname $0)/_bridges/update.python3 \
+/usr/bin/env python3 \
+        $(pwd)/$(dirname $0)/_bridges/update.py \
                 $CORE_APIS_RPC_ADDR \
                 $CORE_APIS_RPC_PORT \
                 $PROJECT_NAME \
